@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitalBMI - Login / Sign Up</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet"> <!-- Modern Font -->
+</head>
+<body>
+    <div class="login-page">
+        <div class="left-section">
+            <div class="logo-container">
+                <span class="brand">VitalBMI</span>
+            </div>
+            <h1 class="elegant-text">Welcome to VitalBMI</h1>
+            <p class="slogan">Your Journey to a Healthier You Starts Here</p>
+        </div>
+        <div class="right-section">
+            <div class="auth-container">
+                <div class="auth-toggle">
+                    <button class="toggle-btn active" onclick="showLogin()">Login</button>
+                    <button class="toggle-btn" onclick="showSignup()">Sign Up</button>
+                </div>
+                <form id="loginForm" class="auth-form active">
+                    <div class="input-group">
+                        <label for="login-email"><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="login-email" name="login-email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="login-password"><i class="fas fa-lock"></i> Password</label>
+                        <input type="password" id="login-password" name="login-password" placeholder="Enter your password" required>
+                    </div>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                    <button type="submit" class="auth-btn">Login Now</button>
+                    <button type="button" class="guest-btn" onclick="guestLogin()">Continue as Guest</button>
+                    <p class="signup-prompt">Don't have an account? <a href="#" onclick="showSignup()">Sign up</a></p>
+                </form>
+                <form id="signupForm" class="auth-form" style="display: none;">
+                    <div class="input-group">
+                        <label for="signup-name"><i class="fas fa-user"></i> Name</label>
+                        <input type="text" id="signup-name" name="signup-name" placeholder="Enter your name" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-email"><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="signup-email" name="signup-email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-password"><i class="fas fa-lock"></i> Password</label>
+                        <input type="password" id="signup-password" name="signup-password" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="auth-btn">Create Account</button>
+                    <p class="login-prompt">Already have an account? <a href="#" onclick="showLogin()">Log in</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        // Tab switching
+        function showLogin() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('signupForm').style.display = 'none';
+            document.querySelector('.toggle-btn.active').classList.remove('active');
+            document.querySelectorAll('.toggle-btn')[0].classList.add('active');
+        }
+
+        function showSignup() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('signupForm').style.display = 'block';
+            document.querySelector('.toggle-btn.active').classList.remove('active');
+            document.querySelectorAll('.toggle-btn')[1].classList.add('active');
+        }
+
+        // Default user setup (if no user exists)
+        window.onload = function() {
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            if (users.length === 0) {
+                users.push({ name: "Test User", email: "test@vitalbmi.com", password: "password123" });
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+        };
+
+        // Signup function
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+
+            if (users.find(user => user.email === email)) {
+                alert('Email already registered!');
+                return;
+            }
+
+            if (name && email && password) {
+                users.push({ name, email, password });
+                localStorage.setItem('users', JSON.stringify(users));
+                alert('Account created successfully! Please log in.');
+                showLogin();
+                document.getElementById('signup-name').value = '';
+                document.getElementById('signup-email').value = '';
+                document.getElementById('signup-password').value = '';
+            } else {
+                alert('Please fill in all fields!');
+            }
+        });
+
+        // Login function
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            const user = users.find(u => u.email === email && u.password === password);
+
+            if (user) {
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                window.location.href = 'homepage.html';
+            } else {
+                alert('Invalid email or password!');
+            }
+        });
+
+        // Guest login function
+        function guestLogin() {
+            localStorage.setItem('currentUser', JSON.stringify({ name: "Guest", email: "guest@vitalbmi.com", password: "" }));
+            window.location.href = 'homepage.html';
+        }
+    </script>
+</body>
+</html>

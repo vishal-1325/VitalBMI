@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitalBMI - Workouts</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <header class="dashboard-header">
+            <div class="logo">
+                <span class="brand">VitalBMI</span>
+            </div>
+            <nav class="menu">
+                <ul class="menu-nav">
+                    <li><a href="homepage.html" class="nav-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="stats.html" class="nav-item"><i class="fas fa-chart-line"></i> Stats</a></li>
+                    <li><a href="workouts.html" class="nav-item"><i class="fas fa-dumbbell"></i> Workouts</a></li>
+                    <li><a href="nutrition.html" class="nav-item"><i class="fas fa-utensils"></i> Nutrition</a></li>
+                    <li><a href="profile.html" class="nav-item"><i class="fas fa-user"></i> Profile</a></li>
+                    <li><a href="about.html" class="nav-item"><i class="fas fa-info-circle"></i> About</a></li>
+                    <li><a href="contact.html" class="nav-item"><i class="fas fa-envelope"></i> Contact</a></li>
+                    <li><a href="terms.html" class="nav-item"><i class="fas fa-file-alt"></i> Terms</a></li>
+                    <li><a href="index.html" class="nav-item"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+            <div class="user-icon-top-right">
+                <img src="assets/user.png" alt="User Icon" class="user-img">
+            </div>
+        </header>
+        <main class="main-content">
+            <h1 class="welcome-title">Workout Zone</h1>
+            <p class="welcome-subtitle">Plan, track, and conquer your fitness goals</p>
+            <div class="workout-tabs">
+                <button class="tab-btn active" onclick="openTab('builder')">Custom Builder</button>
+                <button class="tab-btn" onclick="openTab('tracker')">Workout Tracker</button>
+            </div>
+            <div class="tab-content" id="builder">
+                <h3>Custom Workout Builder</h3>
+                <div class="input-group">
+                    <label><i class="fas fa-dumbbell"></i> Exercise Name</label>
+                    <input type="text" id="builder-exercise" placeholder="e.g., Bench Press" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-sort-numeric-up"></i> Sets</label>
+                    <input type="number" id="builder-sets" placeholder="e.g., 3" min="1" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-sort-numeric-up"></i> Reps</label>
+                    <input type="number" id="builder-reps" placeholder="e.g., 10" min="1" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-clock"></i> Rest (seconds)</label>
+                    <input type="number" id="builder-rest" placeholder="e.g., 60" min="0" required>
+                </div>
+                <button class="calc-btn" onclick="addExercise()">Add Exercise</button>
+                <ul id="custom-workout-list" class="workout-list"></ul>
+                <button class="calc-btn" onclick="saveWorkout()">Save Workout</button>
+            </div>
+            <div class="tab-content" id="tracker" style="display: none;">
+                <h3>Workout Tracker</h3>
+                <div class="input-group">
+                    <label><i class="fas fa-calendar"></i> Date</label>
+                    <input type="date" id="tracker-date" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-dumbbell"></i> Exercise</label>
+                    <input type="text" id="tracker-exercise" placeholder="e.g., Squat" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-weight"></i> Weight (kg)</label>
+                    <input type="number" id="tracker-weight" placeholder="e.g., 50" min="0" step="0.1" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-sort-numeric-up"></i> Reps</label>
+                    <input type="number" id="tracker-reps" placeholder="e.g., 10" min="1" required>
+                </div>
+                <button class="calc-btn" onclick="logWorkout()">Log Workout</button>
+                <ul id="logged-workouts" class="workout-list"></ul>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        // Tab Switching
+        function openTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).style.display = 'block';
+            event.currentTarget.classList.add('active');
+        }
+
+        // Custom Workout Builder
+        let customWorkout = [];
+        function addExercise() {
+            const exercise = document.getElementById('builder-exercise').value;
+            const sets = document.getElementById('builder-sets').value;
+            const reps = document.getElementById('builder-reps').value;
+            const rest = document.getElementById('builder-rest').value;
+            if (exercise && sets && reps && rest) {
+                customWorkout.push({ exercise, sets, reps, rest });
+                updateWorkoutList();
+                document.getElementById('builder-exercise').value = '';
+                document.getElementById('builder-sets').value = '';
+                document.getElementById('builder-reps').value = '';
+                document.getElementById('builder-rest').value = '';
+            }
+        }
+
+        function updateWorkoutList() {
+            const list = document.getElementById('custom-workout-list');
+            list.innerHTML = '';
+            customWorkout.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.textContent = `${item.exercise} - ${item.sets} sets x ${item.reps} reps (Rest: ${item.rest}s)`;
+                list.appendChild(li);
+            });
+        }
+
+        function saveWorkout() {
+            if (customWorkout.length > 0) {
+                localStorage.setItem('customWorkout', JSON.stringify(customWorkout));
+                alert('Workout saved!');
+                customWorkout = [];
+                updateWorkoutList();
+            } else {
+                alert('Add exercises first!');
+            }
+        }
+
+        // Workout Tracker
+        let loggedWorkouts = JSON.parse(localStorage.getItem('loggedWorkouts')) || [];
+        function logWorkout() {
+            const date = document.getElementById('tracker-date').value;
+            const exercise = document.getElementById('tracker-exercise').value;
+            const weight = document.getElementById('tracker-weight').value;
+            const reps = document.getElementById('tracker-reps').value;
+            if (date && exercise && weight && reps) {
+                loggedWorkouts.push({ date, exercise, weight, reps });
+                localStorage.setItem('loggedWorkouts', JSON.stringify(loggedWorkouts));
+                updateLoggedWorkouts();
+                document.getElementById('tracker-date').value = '';
+                document.getElementById('tracker-exercise').value = '';
+                document.getElementById('tracker-weight').value = '';
+                document.getElementById('tracker-reps').value = '';
+            }
+        }
+
+        function updateLoggedWorkouts() {
+            const list = document.getElementById('logged-workouts');
+            list.innerHTML = '';
+            loggedWorkouts.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = `${item.date} - ${item.exercise}: ${item.weight}kg x ${item.reps} reps`;
+                list.appendChild(li);
+            });
+        }
+
+        // Load logged workouts on page load
+        window.onload = updateLoggedWorkouts;
+    </script>
+</body>
+</html>

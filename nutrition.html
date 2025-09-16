@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitalBMI - Nutrition</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <header class="dashboard-header">
+            <div class="logo">
+                <span class="brand">VitalBMI</span>
+            </div>
+            <nav class="menu">
+                <ul class="menu-nav">
+                    <li><a href="homepage.html" class="nav-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="stats.html" class="nav-item"><i class="fas fa-chart-line"></i> Stats</a></li>
+                    <li><a href="workouts.html" class="nav-item"><i class="fas fa-dumbbell"></i> Workouts</a></li>
+                    <li><a href="nutrition.html" class="nav-item"><i class="fas fa-utensils"></i> Nutrition</a></li>
+                    <li><a href="profile.html" class="nav-item"><i class="fas fa-user"></i> Profile</a></li>
+                    <li><a href="about.html" class="nav-item"><i class="fas fa-info-circle"></i> About</a></li>
+                    <li><a href="contact.html" class="nav-item"><i class="fas fa-envelope"></i> Contact</a></li>
+                    <li><a href="terms.html" class="nav-item"><i class="fas fa-file-alt"></i> Terms</a></li>
+                    <li><a href="index.html" class="nav-item"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+            <div class="user-icon-top-right">
+                <img src="assets/user.png" alt="User Icon" class="user-img">
+            </div>
+        </header>
+        <main class="main-content">
+            <h1 class="welcome-title">Nutrition Hub</h1>
+            <p class="welcome-subtitle">Plan and track your dietary journey</p>
+            <div class="nutrition-tabs">
+                <button class="tab-btn active" onclick="openTab('tracker')">Calorie Tracker</button>
+                <button class="tab-btn" onclick="openTab('calculator')">Nutrient Calculator</button>
+            </div>
+            <div class="tab-content" id="tracker">
+                <h3>Calorie Tracker</h3>
+                <div class="input-group">
+                    <label><i class="fas fa-utensils"></i> Food Item</label>
+                    <input type="text" id="tracker-food" placeholder="e.g., Chicken Breast" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-fire"></i> Calories</label>
+                    <input type="number" id="tracker-calories" placeholder="e.g., 200" min="0" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-dna"></i> Protein (g)</label>
+                    <input type="number" id="tracker-protein" placeholder="e.g., 30" min="0" step="0.1" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-bread-slice"></i> Carbs (g)</label>
+                    <input type="number" id="tracker-carbs" placeholder="e.g., 20" min="0" step="0.1" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-oil-can"></i> Fat (g)</label>
+                    <input type="number" id="tracker-fat" placeholder="e.g., 10" min="0" step="0.1" required>
+                </div>
+                <button class="calc-btn" onclick="logFood()">Log Food</button>
+                <ul id="logged-food" class="nutrition-list"></ul>
+                <p id="daily-total" class="result">Daily Total: 0 cal, 0g protein, 0g carbs, 0g fat</p>
+            </div>
+            <div class="tab-content" id="calculator" style="display: none;">
+                <h3>Nutrient Calculator</h3>
+                <div class="input-group">
+                    <label><i class="fas fa-weight"></i> Weight (kg)</label>
+                    <input type="number" id="nut-weight" placeholder="Enter weight" min="0" step="0.1" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-ruler"></i> Height (cm)</label>
+                    <input type="number" id="nut-height" placeholder="Enter height" min="0" step="0.1" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-calendar"></i> Age</label>
+                    <input type="number" id="nut-age" placeholder="Enter age" min="0" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-venus-mars"></i> Gender</label>
+                    <select id="nut-gender" required>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-running"></i> Activity Level</label>
+                    <select id="nut-activity" required>
+                        <option value="1.2">Sedentary</option>
+                        <option value="1.375">Lightly Active</option>
+                        <option value="1.55">Moderately Active</option>
+                        <option value="1.725">Very Active</option>
+                        <option value="1.9">Extra Active</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-bullseye"></i> Goal</label>
+                    <select id="nut-goal" required>
+                        <option value="maintain">Maintain Weight</option>
+                        <option value="lose">Lose Weight (-500 cal)</option>
+                        <option value="gain">Gain Weight (+500 cal)</option>
+                    </select>
+                </div>
+                <button class="calc-btn" onclick="calculateNutrients()">Calculate Nutrients</button>
+                <p id="nut-result" class="result"></p>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        // Tab Switching
+        function openTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).style.display = 'block';
+            event.currentTarget.classList.add('active');
+        }
+
+        // Calorie Tracker
+        let loggedFood = JSON.parse(localStorage.getItem('loggedFood')) || [];
+        function logFood() {
+            const food = document.getElementById('tracker-food').value;
+            const calories = parseFloat(document.getElementById('tracker-calories').value);
+            const protein = parseFloat(document.getElementById('tracker-protein').value);
+            const carbs = parseFloat(document.getElementById('tracker-carbs').value);
+            const fat = parseFloat(document.getElementById('tracker-fat').value);
+            if (food && !isNaN(calories) && !isNaN(protein) && !isNaN(carbs) && !isNaN(fat)) {
+                loggedFood.push({ food, calories, protein, carbs, fat });
+                localStorage.setItem('loggedFood', JSON.stringify(loggedFood));
+                updateFoodList();
+                document.getElementById('tracker-food').value = '';
+                document.getElementById('tracker-calories').value = '';
+                document.getElementById('tracker-protein').value = '';
+                document.getElementById('tracker-carbs').value = '';
+                document.getElementById('tracker-fat').value = '';
+            }
+        }
+
+        function updateFoodList() {
+            const list = document.getElementById('logged-food');
+            const totalCalories = loggedFood.reduce((sum, item) => sum + item.calories, 0);
+            const totalProtein = loggedFood.reduce((sum, item) => sum + item.protein, 0);
+            const totalCarbs = loggedFood.reduce((sum, item) => sum + item.carbs, 0);
+            const totalFat = loggedFood.reduce((sum, item) => sum + item.fat, 0);
+            list.innerHTML = '';
+            loggedFood.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = `${item.food}: ${item.calories} cal, ${item.protein}g protein, ${item.carbs}g carbs, ${item.fat}g fat`;
+                list.appendChild(li);
+            });
+            document.getElementById('daily-total').textContent = `Daily Total: ${totalCalories} cal, ${totalProtein.toFixed(1)}g protein, ${totalCarbs.toFixed(1)}g carbs, ${totalFat.toFixed(1)}g fat`;
+        }
+
+        // Nutrient Calculator (Based on Mifflin-St Jeor)
+        function calculateNutrients() {
+            const weight = parseFloat(document.getElementById('nut-weight').value);
+            const height = parseFloat(document.getElementById('nut-height').value);
+            const age = parseFloat(document.getElementById('nut-age').value);
+            const gender = document.getElementById('nut-gender').value;
+            const activity = parseFloat(document.getElementById('nut-activity').value);
+            const goal = document.getElementById('nut-goal').value;
+            if (weight > 0 && height > 0 && age > 0) {
+                let bmr;
+                if (gender === 'male') {
+                    bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+                } else {
+                    bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+                }
+                let tdee = bmr * activity;
+                let adjustment = 0;
+                if (goal === 'lose') adjustment = -500;
+                else if (goal === 'gain') adjustment = 500;
+                tdee += adjustment;
+
+                // Simple macro split (adjustable)
+                const protein = (weight * 1.6).toFixed(1); // 1.6g per kg body weight
+                const fat = (tdee * 0.25 / 9).toFixed(1); // 25% of calories from fat
+                const carbs = ((tdee - (protein * 4 + fat * 9)) / 4).toFixed(1); // Remaining from carbs
+
+                document.getElementById('nut-result').textContent = `Daily Needs: ${tdee.toFixed(0)} cal | Protein: ${protein}g | Carbs: ${carbs}g | Fat: ${fat}g`;
+            } else {
+                document.getElementById('nut-result').textContent = 'Please enter valid values!';
+            }
+        }
+
+        // Load logged food on page load
+        window.onload = updateFoodList;
+    </script>
+</body>
+</html>

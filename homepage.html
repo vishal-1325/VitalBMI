@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitalBMI - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <header class="dashboard-header">
+            <div class="logo">
+                <span class="brand">VitalBMI</span>
+            </div>
+            <nav class="menu">
+                <ul class="menu-nav">
+                    <li><a href="homepage.html" class="nav-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="stats.html" class="nav-item"><i class="fas fa-chart-line"></i> Stats</a></li>
+                    <li><a href="workouts.html" class="nav-item"><i class="fas fa-dumbbell"></i> Workouts</a></li>
+                    <li><a href="nutrition.html" class="nav-item"><i class="fas fa-utensils"></i> Nutrition</a></li>
+                    <li><a href="profile.html" class="nav-item"><i class="fas fa-user"></i> Profile</a></li>
+                    <li><a href="about.html" class="nav-item"><i class="fas fa-info-circle"></i> About</a></li>
+                    <li><a href="contact.html" class="nav-item"><i class="fas fa-envelope"></i> Contact</a></li>
+                    <li><a href="terms.html" class="nav-item"><i class="fas fa-file-alt"></i> Terms</a></li>
+                    <li><a href="index.html" class="nav-item"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+            <div class="user-icon-top-right" onclick="window.location.href='profile.html'">
+                <img src="assets/user.png" alt="User Icon" class="user-img">
+            </div>
+        </header>
+        <main class="main-content">
+            <h1 class="welcome-title">Welcome to VitalBMI</h1>
+            <p class="welcome-subtitle">Your ultimate health and fitness companion</p>
+            <div class="dashboard-panels">
+                <div class="panel stats" onclick="window.location.href='stats.html'">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Health Stats</h3>
+                    <p>Track BMI and progress</p>
+                </div>
+                <div class="panel workouts" onclick="window.location.href='workouts.html'">
+                    <i class="fas fa-dumbbell"></i>
+                    <h3>Workout Plans</h3>
+                    <p>Design your routines</p>
+                </div>
+                <div class="panel nutrition" onclick="window.location.href='nutrition.html'">
+                    <i class="fas fa-utensils"></i>
+                    <h3>Nutrition</h3>
+                    <p>Plan your meals</p>
+                </div>
+                <div class="panel goals" onclick="window.location.href='goals.html'">
+                    <i class="fas fa-bullseye"></i>
+                    <h3>Fitness Goals</h3>
+                    <p>Achieve your targets</p>
+                </div>
+            </div>
+            <div class="progress-section">
+                <h3>Progress Overview</h3>
+                <div class="progress-bar">
+                    <div class="progress" id="overview-progress"></div>
+                </div>
+                <p id="overview-status">No goal set yet!</p>
+            </div>
+            <div class="dummy-content">
+                <p>Explore more insights and updates here...</p>
+                <p>Additional content for scrolling...</p>
+                <p>More content for scrolling...</p>
+            </div>
+        </main>
+    </div>
+    <script>
+        // Handle active nav item
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault(); // Prevent default anchor behavior
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                const href = this.getAttribute('href');
+                if (href !== '#') {
+                    window.location.href = href; // Navigate to the linked page
+                } else {
+                    updateContent(this.textContent); // Update content for placeholder links
+                }
+            });
+        });
+
+        // Profile icon click handler (already added in HTML)
+
+        function updateContent(section) {
+            const subtitle = document.querySelector('.welcome-subtitle');
+            const panels = document.querySelector('.dashboard-panels');
+            const progress = document.querySelector('.progress-section');
+            switch(section) {
+                case 'Dashboard':
+                    subtitle.textContent = 'Your ultimate health and fitness companion';
+                    panels.style.display = 'grid';
+                    progress.style.display = 'block';
+                    break;
+                case 'Stats':
+                    subtitle.textContent = 'Detailed health statistics';
+                    panels.style.display = 'none';
+                    progress.style.display = 'none';
+                    break;
+                case 'Workouts':
+                    subtitle.textContent = 'Plan your workout routines';
+                    panels.style.display = 'none';
+                    progress.style.display = 'none';
+                    break;
+                case 'Nutrition':
+                    subtitle.textContent = 'Manage your nutrition plans';
+                    panels.style.display = 'none';
+                    progress.style.display = 'none';
+                    break;
+                case 'Profile':
+                    // Navigation handled by href
+                    break;
+                case 'About':
+                    // Navigation handled by href
+                    break;
+                case 'Contact':
+                    // Navigation handled by href
+                    break;
+                case 'Terms':
+                    // Navigation handled by href
+                    break;
+                default:
+                    subtitle.textContent = 'Your ultimate health and fitness companion';
+                    panels.style.display = 'grid';
+                    progress.style.display = 'block';
+            }
+        }
+
+        // Sync Progress Overview with Fitness Goals
+        let goals = JSON.parse(localStorage.getItem('fitnessGoals')) || [];
+
+        window.onload = function() {
+            syncProgressOverview();
+        };
+
+        function syncProgressOverview() {
+            const progressBar = document.getElementById('overview-progress');
+            const status = document.getElementById('overview-status');
+
+            if (goals.length > 0) {
+                // Take the latest goal as the reference
+                const latestGoal = goals[goals.length - 1];
+                const currentDate = new Date();
+                const deadlineDate = new Date(latestGoal.deadline);
+                let progress = 0;
+
+                if (deadlineDate > currentDate && latestGoal.target > 0) {
+                    const timeElapsed = (currentDate - new Date()) / (deadlineDate - currentDate); // Adjusted for correct progress
+                    progress = Math.min(100, Math.max(0, (timeElapsed * 100))); // Ensure progress between 0-100
+                }
+
+                latestGoal.progress = progress;
+                progressBar.style.width = `${progress}%`;
+                status.textContent = `Progress: ${progress.toFixed(1)}% to ${latestGoal.type} ${latestGoal.target} by ${latestGoal.deadline}`;
+                localStorage.setItem('fitnessGoals', JSON.stringify(goals)); // Update progress in storage
+            } else {
+                progressBar.style.width = '0%';
+                status.textContent = 'No goal set yet! Set a goal in Fitness Goals.';
+            }
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92e1a84ef8b37bdc',t:'MTc0NDI4MTk1NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
+</html>

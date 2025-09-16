@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitalBMI - Profile</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <header class="dashboard-header">
+            <div class="logo">
+                <span class="brand">VitalBMI</span>
+            </div>
+            <nav class="menu">
+                <ul class="menu-nav">
+                    <li><a href="homepage.html" class="nav-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="stats.html" class="nav-item"><i class="fas fa-chart-line"></i> Stats</a></li>
+                    <li><a href="workouts.html" class="nav-item"><i class="fas fa-dumbbell"></i> Workouts</a></li>
+                    <li><a href="nutrition.html" class="nav-item"><i class="fas fa-utensils"></i> Nutrition</a></li>
+                    <li><a href="profile.html" class="nav-item"><i class="fas fa-user"></i> Profile</a></li>
+                    <li><a href="about.html" class="nav-item"><i class="fas fa-info-circle"></i> About</a></li>
+                    <li><a href="contact.html" class="nav-item"><i class="fas fa-envelope"></i> Contact</a></li>
+                    <li><a href="terms.html" class="nav-item"><i class="fas fa-file-alt"></i> Terms</a></li>
+                    <li><a href="index.html" class="nav-item"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+            <div class="user-icon-top-right" onclick="window.location.href='profile.html'">
+                <img src="assets/user.png" alt="User Icon" class="user-img">
+            </div>
+        </header>
+        <main class="main-content">
+            <h1 class="welcome-title">My Profile</h1>
+            <p class="welcome-subtitle">Manage your personal details and account</p>
+            <div class="profile-sections">
+                <section class="profile-section">
+                    <h3>Personal Information</h3>
+                    <div class="input-group">
+                        <label><i class="fas fa-user"></i> Name</label>
+                        <input type="text" id="profile-name" placeholder="Enter your name" value="User" required>
+                    </div>
+                    <div class="input-group">
+                        <label><i class="fas fa-calendar"></i> Age</label>
+                        <input type="number" id="profile-age" placeholder="Enter your age" min="0" value="25" required>
+                    </div>
+                    <div class="input-group">
+                        <label><i class="fas fa-venus-mars"></i> Gender</label>
+                        <select id="profile-gender" required>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label><i class="fas fa-weight"></i> Weight (kg)</label>
+                        <input type="number" id="profile-weight" placeholder="Enter weight" min="0" step="0.1" value="70" required>
+                    </div>
+                    <div class="input-group">
+                        <label><i class="fas fa-ruler"></i> Height (cm)</label>
+                        <input type="number" id="profile-height" placeholder="Enter height" min="0" step="0.1" value="170" required>
+                    </div>
+                    <div class="input-group">
+                        <label><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="profile-email" placeholder="Enter email" value="user@example.com" required>
+                    </div>
+                    <button class="calc-btn" onclick="saveProfile()">Save Changes</button>
+                    <p id="profile-result" class="result"></p>
+                </section>
+                <section class="profile-section">
+                    <h3>Account Settings</h3>
+                    <div class="input-group">
+                        <label><i class="fas fa-lock"></i> Current Password</label>
+                        <input type="password" id="profile-current-password" placeholder="Enter current password" required>
+                    </div>
+                    <div class="input-group">
+                        <label><i class="fas fa-lock"></i> New Password</label>
+                        <input type="password" id="profile-new-password" placeholder="Enter new password" required>
+                    </div>
+                    <div class="input-group">
+                        <label><i class="fas fa-lock"></i> Confirm New Password</label>
+                        <input type="password" id="profile-confirm-password" placeholder="Confirm new password" required>
+                    </div>
+                    <button class="calc-btn" onclick="changePassword()">Change Password</button>
+                    <p id="account-result" class="result"></p>
+                    <button class="calc-btn" onclick="deleteAccount()" style="background: linear-gradient(90deg, #f44336, #d32f2f); margin-top: 15px;">Delete Account</button>
+                </section>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        // Load data from localStorage
+        let profileData = JSON.parse(localStorage.getItem('profileData')) || { name: "User", age: 25, gender: "male", weight: 70, height: 170, email: "user@example.com" };
+
+        // Populate fields on load
+        window.onload = function() {
+            document.getElementById('profile-name').value = profileData.name;
+            document.getElementById('profile-age').value = profileData.age;
+            document.getElementById('profile-gender').value = profileData.gender;
+            document.getElementById('profile-weight').value = profileData.weight;
+            document.getElementById('profile-height').value = profileData.height;
+            document.getElementById('profile-email').value = profileData.email;
+        };
+
+        // Save Profile
+        function saveProfile() {
+            profileData.name = document.getElementById('profile-name').value;
+            profileData.age = parseInt(document.getElementById('profile-age').value);
+            profileData.gender = document.getElementById('profile-gender').value;
+            profileData.weight = parseFloat(document.getElementById('profile-weight').value);
+            profileData.height = parseFloat(document.getElementById('profile-height').value);
+            profileData.email = document.getElementById('profile-email').value;
+            localStorage.setItem('profileData', JSON.stringify(profileData));
+            document.getElementById('profile-result').textContent = 'Profile updated successfully!';
+            setTimeout(() => document.getElementById('profile-result').textContent = '', 3000);
+        }
+
+        // Change Password
+        function changePassword() {
+            const currentPassword = document.getElementById('profile-current-password').value;
+            const newPassword = document.getElementById('profile-new-password').value;
+            const confirmPassword = document.getElementById('profile-confirm-password').value;
+
+            // Simple validation (in a real app, check against stored password)
+            if (currentPassword === "pass" && newPassword === confirmPassword && newPassword.length >= 6) {
+                // In a real app, update the password in a secure backend
+                localStorage.setItem('userPassword', newPassword); // For demo purposes
+                document.getElementById('account-result').textContent = 'Password changed successfully!';
+                document.getElementById('profile-current-password').value = '';
+                document.getElementById('profile-new-password').value = '';
+                document.getElementById('profile-confirm-password').value = '';
+            } else {
+                document.getElementById('account-result').textContent = 'Password change failed! Ensure current password is "pass" and new passwords match (min 6 chars).';
+            }
+            setTimeout(() => document.getElementById('account-result').textContent = '', 5000);
+        }
+
+        // Delete Account
+        function deleteAccount() {
+            if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                localStorage.clear(); // Clears all localStorage data (for demo purposes)
+                window.location.href = 'index.html'; // Redirect to login page
+            }
+        }
+    </script>
+</body>
+</html>
