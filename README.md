@@ -5,7 +5,6 @@
 ## Live Demo
 Check out the live version [here](https://vishal-1325.github.io/VitalBMI/)  
 
-*(Replace the link above with your GitHub Pages live URL)*
 
 ## Features
 - Calculate BMI instantly by entering weight and height
